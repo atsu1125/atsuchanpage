@@ -115,16 +115,15 @@ br0と同じサブネットになっていればOK、DNSサーバーはパブリ
 インターフェースのファイアーウォールゾーンをbr0をinternalに変更してやる  
 
 ```
-sudo firewall-cmd  --add-masquerade --permanent
-sudo firewall-cmd  --add-masquerade --permanent
+sudo firewall-cmd --add-masquerade --permanent
+sudo firewall-cmd --add-masquerade --permanent --zone=internal
 sudo firewall-cmd --zone=internal --change-interface=br0 --permanent
 ```
 
-変更するとfirewallの設定が変わるからsshが切れないようにはしてね  
-そしてfirewall-cmdで両方のゾーンにマスカレードを有効化する、これだけで十分  
-デフォルトのfirewallゾーンを使用しなくなっているから適宜ファイヤーウォール設定をexternalとinternal両方にしてやる  
-設定ができたら、既存のsshは閉じずに新しくsshとか開いて接続が通ってるか確認してね、ダメだったらfirewall-cmdで見直す  
-firewallがダメな状態で既存のSSH切るともうつながらなくなるからね  
+変更するとfirewallの設定が変わるからsshが切れないようにはしてね
+そしてfirewall-cmdでデフォルトとinternalの両方のゾーンにマスカレードを有効化する、これだけで十分
+設定ができたら、既存のsshは閉じずに新しくsshとか開いて接続が通ってるか確認してね、ダメだったらfirewall-cmdで見直す
+firewallがダメな状態で既存のSSH切るともうつながらなくなるからね
 
 # VPNサーバー設定最終確認：
 これまでの手順ができてたら試しにWindowsのsoftetherクライアントからVPN Serverに接続するとウィンドウが出てきて  
