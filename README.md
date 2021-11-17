@@ -13,14 +13,18 @@
 7/4 検索可能なトゥートを全ての公開範囲に設定  
 7/5 ハッシュタグタイムラインで全ての公開範囲をみられるように設定  
 8/25 ドメインタイムラインを導入  
+11/14 Vultrオブジェクトストレージを導入  
 ##  <a href=https://pleroma.atsuchan.page>pleroma.atsuchan.page</a> (Pleroma) ##
 2021/5/2 インスタンス稼働開始（さくらインターネット）  
 8/15 さくらインターネットからVultrに移行  
 9/3 GINインデックスからRUMインデックスに変更  
+11/15 Vultrオブジェクトストレージを導入  
 ## <a href=https://peertube.atsuchan.page>peertube.atsuchan.page</a> (PeerTube) ##
 2021/7/5 インスタンス稼働開始（さくらインターネット）  
 8/15 さくらインターネットからVultrに移行  
 8/16 ライブ配信機能を有効化  
+11/14 データベースの破損が発覚しデータを削除した上で初期化し再出発  
+11/15 Vultrオブジェクトストレージを導入  
 ## <a href=https://funkwhale.atsuchan.page>funkwhale.atsuchan.page</a> (Funkwhale) ##
 2021/9/12 インスタンス稼働開始（自宅Mac）  
 ## <a href=https://plume.atsuchan.page>plume.atsuchan.page</a> (Plume) ##
