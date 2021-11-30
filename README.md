@@ -29,6 +29,7 @@
 2021/9/12 インスタンス稼働開始（自宅Mac）  
 ## <a href=https://plume.atsuchan.page>plume.atsuchan.page</a> (Plume) ##
 2021/9/13 インスタンス稼働開始（自宅Mac）  
+2021/11/29 自宅MacからVultrに移行
 ## <a href=https://mobilizon.atsuchan.page>mobilizon.atsuchan.page</a> (Mobilizon) ##
 2021/9/19 インスタンス稼働開始（自宅Mac）  
 ## <a href=https://relay.shc.kanagawa.jp>relay.shc.kanagawa.jp</a> (LitePub relay) ##
