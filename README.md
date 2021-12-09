@@ -25,13 +25,9 @@
 8/16 ライブ配信機能を有効化  
 11/14 データベースの破損が発覚しデータを削除した上で初期化し再出発  
 11/15 Vultrオブジェクトストレージを導入  
-## <a href=https://funkwhale.atsuchan.page>funkwhale.atsuchan.page</a> (Funkwhale) ##
-2021/9/12 インスタンス稼働開始（自宅Mac）  
 ## <a href=https://plume.atsuchan.page>plume.atsuchan.page</a> (Plume) ##
 2021/9/13 インスタンス稼働開始（自宅Mac）  
 2021/11/29 自宅MacからVultrに移行
-## <a href=https://mobilizon.atsuchan.page>mobilizon.atsuchan.page</a> (Mobilizon) ##
-2021/9/19 インスタンス稼働開始（自宅Mac）  
 ## <a href=https://relay.shc.kanagawa.jp>relay.shc.kanagawa.jp</a> (LitePub relay) ##
 2021/9/3 稼働開始（Azure）  
 ## <a href=https://mt.shc.kanagawa.jp>mt.shc.kanagawa.jp</a> (Mastodon) ##
