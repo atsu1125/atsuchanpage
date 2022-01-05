@@ -8,6 +8,10 @@ VPS上でSoftether VPN Serverを使えるようにして、自宅鯖にVPNでト
 1.ふつうにローカルブリッジするとVPNのネットとVPN鯖の間で通信ができない（VPN鯖からVPNでつないだ先の自宅鯖の間で通信できない、それ以外のVPN経由でのインターネットはできる）  
 2.SecureNAT使うと私の愛用するMastodonのStreamingが前触れなく切れて使い物にならない（それ以外のVPN通信は問題なさそうだった）  
 
+# 環境：
+Fedora 34, Fedora 35, CentOS Stream 8  
+SoftEther Ver 4.38, Build 9760, rtm  
+
 # Softehter基本セットアップ：
 とりあえずOSの基本的な設定とSoftetherの最初のセットアップをしちゃうよ、どちらも最新版にアップデートしていこうね  
 セットアップの方法は公式マニュアルと他のサイト見つつやるといいね、ポイントはsystemctlでサービスをコントロールするようにする  
@@ -21,12 +25,15 @@ After=network.target network-online.target
 [Service]
 Type=forking
 ExecStart=/usr/local/vpnserver/vpnserver start
+ExecStartPost=systemctl restart dhcpd.service
 ExecStop=/usr/local/vpnserver/vpnserver stop
+ExecStopPost=systemctl stop dhcpd.service
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
 ```
+SoftEther起動時にdhcpdを起動させてるのはSoftEtherがインターフェースを作らないと起動時にこけるっぽいのと、今回はこれ用途でしかつか使わないから同時に制御しようというもの  
 5555がSoftetherで設定するときに使うポートにもなるから手っ取り早くここを最初に開けておけばWindowsのSoftether VPN Server設定を用いてGUIでセットアップができるようになるよ  
 仮想HUBを作ってアカウントも作ろう  
 DDNS・Azure・NATトラバーサルは必要ないからSoftetherの設定ファイルで無効化しちゃうよ  
@@ -110,6 +117,13 @@ max-lease-time 43200;
 br0と同じサブネットになっていればOK、DNSサーバーはパブリックDNSの1.1.1.1とか入れとくといい  
 これも自動起動できるようにsystemctlにサービス登録しておこう  
 
+For Fedora 35
+
+```md:dhcpd.service
+ExecStart=/usr/sbin/dhcpd -f -cf /etc/dhcp/dhcpd.conf -user dhcpd -group dhcpd --no-pid br0 $DHCPDARGS
+```
+ExecStartの部分だけ最後に`br0`などインターフェース名を書かないと起動に失敗するので追記しておく  
+
 # NAT（マスカレード）の設定：
 そしたら次にNATを設定していく、IPマスカレードってやつができればいい  
 インターフェースのファイアーウォールゾーンをbr0をinternalに変更してやる  
@@ -118,6 +132,17 @@ br0と同じサブネットになっていればOK、DNSサーバーはパブリ
 sudo firewall-cmd --add-masquerade --permanent
 sudo firewall-cmd --add-masquerade --permanent --zone=internal
 sudo firewall-cmd --zone=internal --change-interface=br0 --permanent
+```
+For Fedora 35
+
+```
+sudo firewall-cmd --add-masquerade --permanent
+sudo firewall-cmd --zone=internal --change-interface=br0 --permanent
+sudo firewall-cmd --permanent --new-policy policy_int_to_ext
+sudo firewall-cmd --permanent --policy policy_int_to_ext --add-ingress-zone internal
+sudo firewall-cmd --permanent --policy policy_int_to_ext --add-egress-zone FedoraServer
+sudo firewall-cmd --permanent --policy policy_int_to_ext --set-priority 100
+sudo firewall-cmd --permanent --policy policy_int_to_ext --set-target ACCEPT
 ```
 
 変更するとfirewallの設定が変わるからsshが切れないようにはしてね
