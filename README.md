@@ -32,11 +32,13 @@
 2021/9/3 稼働開始（Azure）  
 ## <a href=https://mt.shc.kanagawa.jp>mt.shc.kanagawa.jp</a> (Mastodon) ##
 2021/8/29 インスタンス稼働開始（自宅Mac）  
+2022/3/30 自宅Macから自宅ThinkCentreに移行・Vultrオブジェクトストレージ導入  
 ## <a href=https://pr.shc.kanagawa.jp>pr.shc.kanagawa.jp</a> (Pleroma) ##
 2021/8/1 インスタンス稼働開始（自宅Mac）  
 8/21 自宅MacからGCPに移行  
 9/1 GCPからVultrに移行  
 9/3 GINインデックスからRUMインデックスに変更  
+2022/3/30 Vultrから自宅ThinkCentreに移行・Vultrオブジェクトストレージ導入  
 ## <a href=https://mk.shc.kanagawa.jp>mk.shc.kanagawa.jp</a> (Misskey) ##
 2021/8/1 インスタンス稼働開始（自宅Mac）  
 8/21 全文検索(MeCab)を導入  
