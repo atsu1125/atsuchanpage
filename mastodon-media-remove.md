@@ -24,7 +24,9 @@ sizeの値を変えたりしてechoの出力を見てwhileの文が大丈夫そ�
 cd /home/mastodon/live
 ATTACHMENTS=`RAILS_ENV=production ~/.rbenv/shims/bundle exec bin/tootctl media usage | grep Attachments | awk '{print $2}' | awk '{printf("%d\n",$1)}'`
 days=182 #何日前のデータから削除開始するか
+if [ -e /home/mastodon/days.txt ]; then
 days=`cat /home/mastodon/days.txt` #もし前回実行データあるならこれを見る
+fi
 size=20 #何ギガバイトまで許容するか
 access_token="アクセストークン入れる" #Mastodonで作成したアプリのアクセストークン
 instance_domain=atsuchan.page
@@ -64,7 +66,9 @@ For docker environment
 cd /home/mastodon #dockerディレクトリ
 ATTACHMENTS=`docker-compose run --rm web bundle exec bin/tootctl media usage | grep Attachments | awk '{print $2}' | awk '{printf("%d\n",$1)}'`
 days=150 #何日前のデータから削除開始するか
-days=`cat /home/mastodon/days.txt` #前回実行データあるならそれ読む
+if [ -e /home/mastodon/days.txt ]; then
+days=`cat /home/mastodon/days.txt` #もし前回実行データあるならこれを見る
+fi
 size=50 #何ギガバイトまで許容するか
 #ATTACHMENTSが{size}GBよりも多いなら日数を減じて削除を繰り返す・それ以外なら終了
 while :
