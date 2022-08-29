@@ -161,6 +161,24 @@ MongoDBにログインした時に出る`Free Monitoring URL:`はどこからで
 雑ではありますがこの文字列の件数をカウントすればいいんじゃないかと思います。  
 その上で正常であることを常にハートビート監視用のURL（BetterUptimeとかいいと思う）に投げれば監視スクリプトが落ちても気づきます。  
 それで失敗した際はすぐに通知欲しいのでDiscordに対してWebHookで通知を飛ばします。  
+まずはdiscord.shっていう便利なものを入れます。
+```
+wget https://github.com/ChaoticWeg/discord.sh/raw/master/discord.sh
+chmod +x discord.sh
+mv discord.sh /usr/local/bin/
+```
+依存関係のjqとcurlを入れます。  
+for Debian
+```
+apt install jq curl
+```
+for CentOS
+```
+yum install jq curl
+```
+それで`discord.sh`を叩いて実行できればOKです。
+次に以下のシェルスクリプトを作成します。
+
 
 ```bash:/usr/local/bin/mongo-replica-monitor.sh
 #!/bin/bash
