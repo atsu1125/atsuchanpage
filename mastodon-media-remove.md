@@ -105,7 +105,7 @@ systemctl start mastodon-media-remove-adv.service
 Description = Mastodon old media remove
 
 [Service]
-Type = onehost
+Type = oneshot
 User = mastodon
 WorkingDirectory = /home/mastodon
 ExecStart = /usr/bin/bash -c 'bash /home/mastodon/mastodon-media-remove-adv.sh'
