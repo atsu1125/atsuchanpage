@@ -101,9 +101,9 @@ systemctl start mastodon-media-remove-adv.service
 Description = Mastodon old media remove
 
 [Service]
-Type = simple
+Type = onehost
 User = mastodon
-WorkingDirectory = /home/mastodon/live
+WorkingDirectory = /home/mastodon
 ExecStart = /usr/bin/bash -c 'bash /home/mastodon/mastodon-media-remove-adv.sh'
 #ExecStartPost = curl "heartbeat用のURLを書く" #もしbetteruptimeとかでcronが実行されたか監視したいなら
 ```
