@@ -39,6 +39,7 @@ versioncheck=0
 else
 echo version check was failed.
 versioncheck=1
+fi
 if [ $oldversion != $stableversion ] && [ $versioncheck = 0 ]; then
 echo Misskeyの安定版は${oldversion}から${stableversion}に変わりました。
 echo アップデートを実行します。
@@ -78,6 +79,7 @@ versioncheck=0
 else
 echo version check was failed.
 versioncheck=1
+fi
 if [ $oldversion != $stableversion ] && [ $versioncheck = 0 ]; then
 echo Misskeyの安定版は${oldversion}から${stableversion}に変わりました。
 echo アップデートを実行します。
