@@ -4,7 +4,8 @@ https://misskey.io/@misskeystable
 
 ## 条件
 docker composeでMisskeyをソースコード変えずに運用していること  
-`/home/misskey/misskey/docker-compose.yml`にdocker-compose.ymlがあること
+`/home/misskey/misskey/docker-compose.yml`にdocker-compose.ymlがあること  
+Misskey v12系のバージョンを運用していること
 
 ## 環境設定
 `touch /home/misskey/misskeystable.txt`
@@ -32,7 +33,13 @@ For Debian
 oldversion=`cat /home/misskey/misskeystable.txt`
 stableversion=`curl --silent -X POST https://misskey.io/api/users/show -d '{"username":"misskeystable"}' | jq -r '.description'`
 health=`curl --silent -I -X POST https://misskey.io/api/ping | grep HTTP | awk '{print $2}'`
-if [ $oldversion != $stableversion ] && [ $health = 200 ]; then
+if [[ $stableversion =~ 12\.+[0-9] ]] && [ $health = 200 ]; then
+echo version check is ok.
+versioncheck=0
+else
+echo version check was failed.
+versioncheck=1
+if [ $oldversion != $stableversion ] && [ $versioncheck = 0 ]; then
 echo Misskeyの安定版は${oldversion}から${stableversion}に変わりました。
 echo アップデートを実行します。
 
@@ -43,6 +50,8 @@ docker compose -f /home/misskey/misskey/docker-compose.yml pull;docker compose -
 
 echo アップデート完了しました。バージョンを記憶します。
 echo $stableversion > /home/misskey/misskeystable.txt
+else
+echo $oldversion is latest.
 fi
 ```
 </details>
@@ -63,7 +72,13 @@ fi
 oldversion=`cat /home/misskey/misskeystable.txt`
 stableversion=`curl --silent -X POST https://misskey.io/api/users/show -d '{"username":"misskeystable"}' | jq -r '.description'`
 health=`curl --silent -I -X POST https://misskey.io/api/ping | grep HTTP | awk '{print $2}'`
-if [ $oldversion != $stableversion ] && [ $health = 200 ]; then
+if [[ $stableversion =~ 12\.+[0-9] ]] && [ $health = 200 ]; then
+echo version check is ok.
+versioncheck=0
+else
+echo version check was failed.
+versioncheck=1
+if [ $oldversion != $stableversion ] && [ $versioncheck = 0 ]; then
 echo Misskeyの安定版は${oldversion}から${stableversion}に変わりました。
 echo アップデートを実行します。
 
@@ -76,6 +91,8 @@ docker compose -f /home/misskey/misskey/docker-compose.yml up -d
 
 echo アップデート完了しました。バージョンを記憶します。
 echo $stableversion > /home/misskey/misskeystable.txt
+else
+echo $oldversion is latest.
 fi
 ```
   
