@@ -205,6 +205,24 @@ Mastodonの設定ファイルでオブジェクトストレージを使用する
 連合先では、オブジェクトストレージ移行前にアップロードされたファイルは`https://Mastodonのドメイン/system`を読み、移行後にアップロードされたファイルは`S3_ALIAS_HOST`で設定されたURIを読むためである。
 もちろん工夫次第ではオブジェクトストレージ設定前のURIと設定後のURI両方でアクセスするように設定することもできます。
 
+# Nginxのsystemd serviceファイルの編集
+
+Nginxでオブジェクトストレージをプロキシするようにしたのですが、どうやらサーバーを再起動した後にNginxの起動に失敗するようになってしまうケースがあるようです（私がそうだった）  
+原因としてはNginxが`network-online.target`のあと`multi-user.target`で起動するのですが、その際にリンクアップしているもののまだインターネットにつながってないことがあるため、Nginxの起動時に`nginx -t`を実行してupstreamに接続できないっていうエラーを出してしまうからです。  
+対策として  
+```
+systemctl edit --full nginx.service
+```
+でNginxのサービスファイルを開いたら、`[Service]`の中に
+```systemd:/etc/systemd/system/nginx.service
+Restart=always
+RestartSec=5
+```
+と追記します。  
+できたら`systemctl status nginx`でエラーが出ていないことを確認してください。  
+この設定ではNginxのプロセスが何らかの原因で落ちてしまった時に5秒待って再起動するようにしています。  
+これでインターネットにつながるまで待つことができるので何回目かの再起動にて正常に起動できます。  
+
 # Mastodonの設定ファイルの編集
 いつも通りmastodonユーザーに入ったら`.env.production`を開いて編集  
 以下の設定値を反映  
