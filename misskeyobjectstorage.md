@@ -263,6 +263,24 @@ https://qiita.com/neustrashimy/items/e86737534104a7db3843#%E3%82%B5%E3%83%BC%E3%
 
 これを保存したら `sudo nginx -t` で設定ファイル確認して大丈夫なら `sudo systemctl reload nginx`
 
+# Nginxのsystemd serviceファイルの編集
+
+Nginxでオブジェクトストレージをプロキシするようにしたのですが、どうやらサーバーを再起動した後にNginxの起動に失敗するようになってしまうケースがあるようです（私がそうだった）  
+原因としてはNginxが`network-online.target`のあと`multi-user.target`で起動するのですが、その際にリンクアップしているもののまだインターネットにつながってないことがあるため、Nginxの起動時に`nginx -t`を実行してupstreamに接続できないっていうエラーを出してしまうからです。  
+対策として  
+```
+systemctl edit --full nginx.service
+```
+でNginxのサービスファイルを開いたら、`[Service]`の中に
+```systemd:/etc/systemd/system/nginx.service
+Restart=always
+RestartSec=5
+```
+と追記します。  
+できたら`systemctl status nginx`でエラーが出ていないことを確認してください。  
+この設定ではNginxのプロセスが何らかの原因で落ちてしまった時に5秒待って再起動するようにしています。  
+これでインターネットにつながるまで待つことができるので何回目かの再起動にて正常に起動できます。  
+
 
 # misskeyの設定ファイルの編集
 misskey v10は設定ファイルを以下の要領で編集、misskey v11以降は設定画面より編集
