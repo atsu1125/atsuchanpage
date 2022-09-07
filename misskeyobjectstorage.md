@@ -248,6 +248,7 @@ location /storage/ {
 </details>
 
 <details><summary>配信ディレクトリ置き換えるケース</summary>
+
 ちょっといろいろと気をつけないといけないことが多いので、以下の記事が詳しい。
   
 今回はSwift使わないのでそこを読み替えること。
