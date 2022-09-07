@@ -1,5 +1,22 @@
-mongoDBをオブジェクトストレージにバックアップするやつ
-```bash
+### はじめに
+mongoDBをオブジェクトストレージにバックアップしたい  
+でもPostgreSQLみたいに便利なバックアップツールがない  
+https://qiita.com/atsu1125/items/676d24c0473ad94b3f2b  
+PostgreSQLならポイントインリカバリに使えるようなバックアップが構築可能なのに…  
+最近WAL-GもmongoDBにベータ対応したけど  
+https://wal-g.readthedocs.io/MongoDB/  
+
+ここは自作スクリプトでバックアップするしかなさそう  
+ただ`mongodump`の実行時にはサーバーのスペックがかなり持っていかれるので、  
+現状は１日１回の頻度でセカンダリのデータベースから実行することにしている。  
+https://qiita.com/atsu1125/items/df0ca4d47b835f22dbd3  
+で書いたようにレプリケーションを組み合わせるとよさそう。  
+
+### シェルスクリプト作成
+`/usr/local/bin/mongodbbackup.sh`
+として作成する。
+
+```bash:/usr/local/bin/mongodbbackup.sh
 # バックアップファイルを残しておく日数
 PERIOD='+21'
 # 日付
@@ -49,3 +66,29 @@ aws s3 sync --endpoint-url=$ENDPOINT $SAVEPATH $BACKET --delete
 #保存期間が過ぎたファイルの削除
 find $SAVEPATH -type f -daystart -mtime $PERIOD -exec rm {} \;
 ```
+
+### systemdにインストールして自動化
+`systemctl edit --full --force mongodump.service`
+で
+```systemd:mongodump.service
+[Unit]
+Description=mongoDB Backup
+
+[Service]
+User=root
+Type=oneshot
+ExecStart=/bin/bash -c /usr/local/bin/mongodbbackup.sh
+TimeoutSec=7200
+```
+を作成  
+oneshotにすることでのちのcron.dailyでの実行時に処理が被らないようになる。  
+TimeoutSecを設定しないとmongodumpに時間かかってタイムアウトすることがある。  
+
+次にFedoraの場合crondが動いていることを確認、Ubuntuの場合anacronが動いてることを確認する。  
+そしたら`/etc/cron.daily/mongodbbackup`を作成
+```bash:/etc/cron.daily/mongodbbackup
+systemctl start mongodump.service
+```
+これでいい感じの時間にmongodumpが実行される。  
+
+
