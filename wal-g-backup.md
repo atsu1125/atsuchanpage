@@ -33,7 +33,6 @@ exec /usr/local/bin/wal-g "$@"
 # フルバックアップはサービス化したい　１日ごとのバックアップ  
 フルバックアップはサービス化したいんで  
 /etc/systemd/system/wal-g-full-backup.serviceを作成し、systemctl daemon-reload  
-ExecStartの最初のコマンドでさっきのwal-g-profileっていうファイルを開くことで環境変数割り当ててる  
 ちなみにExecStartPostに書いてあるのはBetter Uptimeっていうので死活監視したくてheartbeat用のURLにcurl投げてます  
 このサービスを実行することでデータベースのバックアップをオブジェクトストレージに転送できます  
 うちはretain 90で90個分（＝９０日分）保存してるわけだけど１回あたりで結構容量食うから７個分とかでもいいかも  
