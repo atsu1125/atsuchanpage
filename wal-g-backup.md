@@ -11,7 +11,7 @@ https://blog.noellabo.jp/entry/2019/03/05/yMjQeU9JXHxcyHTL
 前者Fedora 34はwal-g-pg-ubuntu-20.04-amd64.tar.gzのパッケージで動いた  
 バージョンとしてはwal-g v1.0を使わせてもらいました  
 FedoraなんでUbuntuのビルド済みパッケージ使えないかと思ったけど  
-そんなことはなかったのでwgetでubuntuのビルド済みパッケージをダウンロードして解凍して/usr/bin/local/wal-gとして置いた  
+そんなことはなかったのでwgetでubuntuのビルド済みパッケージをダウンロードして解凍して/usr/local/bin/wal-gとして置いた  
 
 # 環境変数定義
 次に/usr/local/bin/wal-g.shを作成します。  
