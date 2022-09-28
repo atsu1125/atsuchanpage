@@ -45,7 +45,8 @@ Description = WAL-G Full Backup
 Type = oneshot
 User = postgres
 WorkingDirectory = /usr/local/bin
-ExecStart = /usr/bin/bash -c '/usr/local/bin/wal-g.sh backup-push /var/lib/pgsql/13/data;/usr/local/bin/wal-g.sh delete retain 90 --confirm'
+ExecStart = /usr/bin/bash -c '/usr/local/bin/wal-g.sh backup-push /var/lib/pgsql/13/data'
+ExecStartPost = /usr/bin/bash -c '/usr/local/bin/wal-g.sh delete retain 90 --confirm'
 ExecStartPost = curl "監視サイトのheartbeat設定ページに書いてあるURL"
 ```
 
