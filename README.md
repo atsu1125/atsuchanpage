@@ -40,6 +40,7 @@
 9/1 GCPからVultrに移行  
 9/3 GINインデックスからRUMインデックスに変更  
 2022/3/30 Vultrから自宅ThinkCentreに移行・Vultrオブジェクトストレージ導入  
+10/26 Pleroma から Akkoma に変更
 ## <a href=https://mk.shc.kanagawa.jp>mk.shc.kanagawa.jp</a> (Misskey) ##
 2021/8/1 インスタンス稼働開始（自宅Mac）  
 8/21 全文検索(MeCab)を導入  
