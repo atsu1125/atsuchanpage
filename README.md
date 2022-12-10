@@ -14,11 +14,12 @@
 7/5 ハッシュタグタイムラインで全ての公開範囲をみられるように設定  
 8/25 ドメインタイムラインを導入  
 11/14 Vultrオブジェクトストレージを導入  
-##  <a href=https://pleroma.atsuchan.page>pleroma.atsuchan.page</a> (Pleroma) ##
+## pleroma.atsuchan.page (Pleroma) ##
 2021/5/2 インスタンス稼働開始（さくらインターネット）  
 8/15 さくらインターネットからVultrに移行  
 9/3 GINインデックスからRUMインデックスに変更  
 11/15 Vultrオブジェクトストレージを導入  
+2022/12/10 他のインスタンスに統合し廃止
 ## <a href=https://peertube.atsuchan.page>peertube.atsuchan.page</a> (PeerTube) ##
 2021/7/5 インスタンス稼働開始（さくらインターネット）  
 8/15 さくらインターネットからVultrに移行  
