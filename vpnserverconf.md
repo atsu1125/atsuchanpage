@@ -9,18 +9,12 @@ VPS上でSoftether VPN Serverを使えるようにして、自宅鯖にVPNでト
 2.SecureNAT使うと私の愛用するMastodonのStreamingが前触れなく切れて使い物にならない（それ以外のVPN通信は問題なさそうだった）
 
 # 環境：
-Fedora 34, Fedora 36, CentOS Stream 8, Ubuntu 22.04, Debian bullseye
-
+Fedora 34, Fedora 36, CentOS Stream 8, Ubuntu 22.04, Debian bullseye(2022/8/23にDebain系対応しました🎉)
 SoftEther Ver 4.38 Build 9760 rtm
-
 SoftEther VPN 4.39 Build 9772 Beta
-
 192.168.40.0/24をVPNネットワークとして構築する
-
 VPNサーバー（VPS側）は192.168.40.1、VPNクライアント（自宅鯖）は192.168.40.2を割り当て
-
-ファイヤーウォールにfirewalldを使用
-
+ファイヤーウォールにfirewalldかufwを使用(2023/2/1にufw対応しました🎉)
 NginxはVPS側に設置する、自宅鯖に持ってくることもできる
 
 # Softehter基本セットアップ：
@@ -64,7 +58,7 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
-SoftEther起動時にdhcpdを起動させてるのはSoftEtherがインターフェースを作らないと起動時にこけるっぽいのと、今回はこれ用途でしかつか使わないから同時に制御しようというもの
+SoftEther起動時にdhcpdを起動させてるのはSoftEtherがインターフェースを作らないと起動時にこけるっぽいのと、今回はこれ用途でしか使わないから同時に制御しようというもの
 5555がSoftetherで設定するときに使うポートにもなるから手っ取り早くここを最初に開けておけばWindowsのSoftether VPN Server設定を用いてGUIでセットアップができるようになるよ
 仮想HUBを作ってアカウントも作ろう
 DDNS・Azure・NATトラバーサルは必要ないからSoftetherの設定ファイルで無効化しちゃうよ
@@ -72,6 +66,7 @@ DDNS・Azure・NATトラバーサルは必要ないからSoftetherの設定フ�
 今回はL2TPとOpenVPNでiOSとかからもつなげるようにするからの機能を有効化してね
 あとはfirewalldのserviceファイル作って992,1194,5555,8888,500,4500を許可してね
 
+for firewalld
 ```xml:/etc/firewalld/services/softether.xml
 <?xml version="1.0" encoding="utf-8"?>
 <service>
@@ -96,6 +91,16 @@ DDNS・Azure・NATトラバーサルは必要ないからSoftetherの設定フ�
 <port protocol="udp" port="40000-44999"/>
 </service>
 
+```
+
+for ufw
+```bash
+ufw allow 5555
+ufw allow 8888
+ufw allow 992
+ufw allow 1194
+ufw allow 500/udp
+ufw allow 4500/udp
 ```
 
 # OSでブリッジデバイスの作成：
@@ -125,6 +130,7 @@ Ubuntuはこれインストールするだけ
 For Fedora 36
 
 ```systemd:/etc/systemd/system/vpnserver.service
+#ExecStartPost=systemctl restart dhcpd.service の前に追記
 ExecStartPost=/usr/bin/sleep 5s
 ExecStartPost=/usr/sbin/ip link set dev tap_vpn（←さっき設定した任意のtapデバイス名） master br0
 ```
@@ -132,8 +138,11 @@ ExecStartPost=/usr/sbin/ip link set dev tap_vpn（←さっき設定した任意
 For Ubuntu 20.04
 
 ```systemd:/etc/systemd/system/vpnserver.service
+#ExecStartPost=systemctl restart isc-dhcp-server.service の前に追記
 ExecStartPost=/usr/bin/sleep 5s
 ExecStartPost=/usr/bin/bash -c '/usr/sbin/brctl addbr br0;/usr/sbin/ip link set dev tap_vpn master br0;/usr/sbin/ip link set dev br0 up;/usr/sbin/ip addr add 192.168.40.1/24 dev br0'
+
+#ExecStopPost=systemctl stop isc-dhcp-server.service　の後に追記
 ExecStopPost=/usr/bin/bash -c '/usr/sbin/ip link set dev br0 down;/usr/sbin/brctl delbr br0'
 ```
 の行を追加してね、RHEL8系だとbrctlは今は使わないらしくipコマンドでブリッジさせるよ、Ubuntuはbrctl使うので起動時の処理でブリッジする
@@ -172,19 +181,23 @@ DHCPDARGS="br0";
 そしたら次にNATを設定していく、IPマスカレードってやつができればいい
 インターフェースのファイアーウォールゾーンをbr0をinternalに変更してやる
 
+For Fedora 34 firewalld
+
 ```sh
 sudo firewall-cmd --add-masquerade --permanent
 sudo firewall-cmd --add-masquerade --permanent --zone=internal
 sudo firewall-cmd --zone=internal --change-interface=br0 --permanent
 ```
-For Fedora 35, Fedora 36 and Ubuntu 22.04
+
+For Fedora 35, Fedora 36 and Ubuntu 22.04 firewalld
 
 ```sh
 sudo firewall-cmd --add-masquerade --permanent
 sudo firewall-cmd --zone=internal --change-interface=br0 --permanent
 sudo firewall-cmd --permanent --new-policy policy_int_to_ext
 sudo firewall-cmd --permanent --policy policy_int_to_ext --add-ingress-zone internal
-sudo firewall-cmd --permanent --policy policy_int_to_ext --add-egress-zone (デフォルトのゾーン：FedoraServerかpublicなきがする)
+sudo firewall-cmd --permanent --policy policy_int_to_ext --add-egress-zone public
+#(デフォルトのゾーン：FedoraServerかpublicな気がする)
 sudo firewall-cmd --permanent --policy policy_int_to_ext --set-priority 100
 sudo firewall-cmd --permanent --policy policy_int_to_ext --set-target ACCEPT
 ```
@@ -193,6 +206,48 @@ sudo firewall-cmd --permanent --policy policy_int_to_ext --set-target ACCEPT
 そして`firewall-cmd`でデフォルトとinternalの両方のゾーンにマスカレードを有効化する、これだけで十分
 設定ができたら、既存のsshは閉じずに新しくsshとか開いて接続が通ってるか確認してね、ダメだったら`firewall-cmd`で見直す
 firewallがダメな状態で既存のSSH切るともうつながらなくなるからね
+
+For ufw
+
+```
+sudo nano /etc/default/ufw
+```
+
+```sh:/etc/default/ufw
+ DEFAULT_FORWARD_POLICY="ACCEPT"
+```
+
+```
+sudo nano /etc/sysctl.conf 
+```
+
+```sh:/etc/sysctl.conf
+net.ipv4.ip_forward=1
+```
+
+```
+sudo sysctl -p
+```
+
+```
+sudo nano /etc/ufw/before.rules
+```
+
+```
+# NAT
+*nat
+-F
+:POSTROUTING ACCEPT [0:0]
+-A POSTROUTING -s 192.168.40.0/24 -o eth0 -j MASQUERADE
+#たぶん外部インターフェースがeth0かどうかは環境によって違うので適宜変更
+
+COMMIT
+```
+
+```
+sudo ufw reload
+```
+
 
 # VPNサーバー設定最終確認：
 これまでの手順ができてたら試しにWindowsのsoftetherクライアントからVPN Serverに接続するとウィンドウが出てきて
