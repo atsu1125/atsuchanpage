@@ -165,6 +165,12 @@ yourdomainを各自のドメイン名で置き換えるのと
   
 proxy_pass の後のURLはyourbacketnameがバケット名なのでさっき作成したバケット名に置き換える。
 
+
+```
+mkdir /var/cache/nginx/proxy_cache_images
+chown -R nginx: /var/cache/nginx/proxy_cache_images
+```
+  
 ```nginx:s3.yourdomain.conf
 server {
   listen 80;
@@ -174,6 +180,8 @@ server {
   location / { return 301 https://$host$request_uri; }
 }
 
+proxy_cache_path /var/cache/nginx/proxy_cache_images levels=1 keys_zone=images:2m max_size=20g inactive=90d;
+  
 server {
     listen 443 ssl http2;
     listen [::]:443 ssl http2;
@@ -196,6 +204,16 @@ server {
       resolver 1.1.1.1 valid=100s;
       proxy_pass https://yourbacketname.ewr1.vultrobjects.com$request_uri; #シンガポールならewr1ではなくsgp1
       expires max;
+  proxy_buffering on;
+  proxy_hide_header Set-Cookie;
+  proxy_ignore_headers Set-Cookie;
+  proxy_set_header cookie "";
+  proxy_cache images;
+  proxy_cache_valid 200 302 90d;
+  proxy_cache_valid any 5m;
+  proxy_ignore_headers Cache-Control Expires;
+  proxy_cache_lock on;
+  add_header X-Cache $upstream_cache_status;
     }
 }
 
@@ -222,7 +240,17 @@ yourdomainは各自のドメインにしてね。
   
 現在は`https://インスタンスのドメイン/files`から配信されていますのでこれを変更します。
 
+```
+mkdir /var/cache/nginx/proxy_cache_images
+chown -R nginx: /var/cache/nginx/proxy_cache_images
+```
+
 misskeyのNginxファイルに以下追記
+
+まずserverディレクティブの外部に
+```nginx:/etc/nginx/sites-available/misskey.conf
+proxy_cache_path /var/cache/nginx/proxy_cache_images levels=1 keys_zone=images:2m max_size=20g inactive=90d;
+```
 
 ```nginx:/etc/nginx/sites-available/misskey.conf
 location /storage/ {
@@ -236,12 +264,26 @@ location /storage/ {
 
   proxy_pass https://バケット名.ewr1.vultrobjects.com/; #シンガポールならewr1ではなくsgp1
 
-  proxy_buffering off;
+  proxy_buffering on;
   proxy_redirect off;
   proxy_http_version 1.1;
   proxy_set_header Host バケット名.ewr1.vultrobjects.com; #シンガポールならewr1ではなくsgp1
   tcp_nodelay on;
 
+
+  expires max;
+  proxy_hide_header etag;
+  proxy_hide_header Set-Cookie;
+  proxy_ignore_headers Set-Cookie;
+  proxy_set_header cookie "";
+  proxy_cache images;
+  proxy_cache_valid 200 302 90d;
+  proxy_cache_valid any 5m;
+  proxy_ignore_headers Cache-Control Expires;
+  proxy_cache_lock on;
+  add_header X-Cache $upstream_cache_status;
+
+  
 }
 ```
 
