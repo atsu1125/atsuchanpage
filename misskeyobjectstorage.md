@@ -205,9 +205,6 @@ server {
       proxy_pass https://yourbacketname.ewr1.vultrobjects.com$request_uri; #シンガポールならewr1ではなくsgp1
       expires max;
   proxy_buffering on;
-  proxy_hide_header Set-Cookie;
-  proxy_ignore_headers Set-Cookie;
-  proxy_set_header cookie "";
   proxy_cache images;
   proxy_cache_valid 200 302 90d;
   proxy_cache_valid any 5m;
