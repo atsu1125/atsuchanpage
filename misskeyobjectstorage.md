@@ -138,8 +138,11 @@ Pleromaだけどpr.shc.kanagawa.jp: https://pr.shc.kanagawa.jp/storage
 
 デメリット：オブジェクトストレージへのプロキシをmisskey Webと同じWebサーバーに置かないといけない、つまりアクセス増加した際に専用のオブジェクトストレージプロキシ用のNginxを用意するとかは不可能になる
 
-## 一番スマートな既存の配信ディレクトリを置き換えるケース
-ちょっと設定がうまくいった試しがないので、情報提供募集中です。
+## 一番スマートな既存の配信ディレクトリを置き換えるケース（ダメ）
+
+`/files`ディレクトリをオブジェクトストレージにプロキシなんてしてはいけない！
+
+理由： https://qiita.com/atsu1125/items/39fa725f6250ba8c7c13
 
 ## 手順
 
@@ -286,18 +289,11 @@ location /storage/ {
 
 </details>
 
-<details><summary>配信ディレクトリ置き換えるケース</summary>
+<details><summary>配信ディレクトリ置き換えるケース（してはいけない）</summary>
 
-ちょっといろいろと気をつけないといけないことが多いので、以下の記事が詳しい。
-  
-今回はSwift使わないのでそこを読み替えること。
-  
-Misskeyではどうしたらうまくいくんだろう…
-  
-Misskeyの`/files`がMastodonの`/system`と取り扱いが違う感じする
+`/files`ディレクトリをオブジェクトストレージにプロキシなんてしてはいけない！
 
-MastodonのメディアファイルをOpenStack Swift互換オブジェクトストレージに移行する by @neustrashimy 
-https://qiita.com/neustrashimy/items/e86737534104a7db3843#%E3%82%B5%E3%83%BC%E3%83%90%E5%81%B4%E8%A8%AD%E5%AE%9A2-%E9%85%8D%E4%BF%A1%E3%83%87%E3%82%A3%E3%83%AC%E3%82%AF%E3%83%88%E3%83%AA%E7%BD%AE%E3%81%8D%E6%8F%9B%E3%81%88%E3%81%AE%E5%A0%B4%E5%90%88
+理由： https://qiita.com/atsu1125/items/39fa725f6250ba8c7c13
 
 </details>
 
