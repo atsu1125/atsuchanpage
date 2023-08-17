@@ -53,6 +53,10 @@ echo アップデート完了しました。バージョンを記憶します。
 echo $stableversion > /home/misskey/misskeystable.txt
 else
 echo $oldversion is latest.
+dockerversion=`docker compose -f /home/misskey/misskey/docker-compose.yml images | sed -n '3p' | awk '{print $3}'`
+if [[ $oldversion != $dockerversion ]] ; then
+docker compose -f /home/misskey/misskey/docker-compose.yml pull;docker compose -f /home/misskey/misskey/docker-compose.yml up -d
+fi
 fi
 ```
 </details>
