@@ -55,6 +55,7 @@ else
 echo $oldversion is latest.
 dockerversion=`docker compose -f /home/misskey/misskey/docker-compose.yml images | sed -n '3p' | awk '{print $3}'`
 if [[ $oldversion != $dockerversion ]] ; then
+sudo sed -i -e "/^ *image: misskey\/misskey:/c\    image: misskey\/misskey:$stableversion" /home/misskey/misskey/docker-compose.yml
 docker compose -f /home/misskey/misskey/docker-compose.yml pull;docker compose -f /home/misskey/misskey/docker-compose.yml up -d
 fi
 fi
