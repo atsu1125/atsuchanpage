@@ -294,7 +294,7 @@ location /storage/ {
 
   resolver 127.0.0.53 valid=30s ipv6=off;
 
-  proxy_pass https://バケット名.ewr1.vultrobjects.com/; #シンガポールならewr1ではなくsgp1
+  proxy_pass https://バケット名.ewr1.vultrobjects.com/storage/; #シンガポールならewr1ではなくsgp1
 
   proxy_buffering on;
   proxy_redirect off;
