@@ -72,6 +72,8 @@ Vultrのオブジェクトストレージはデフォルトだと非公開なの
 
 s3cmdの使い方については https://www.vultr.com/ja/docs/how-to-use-s3cmd-with-vultr-object-storage を見て。
 
+RHEL系ならdnfかyum, Debian系ならaptで
+
 ```
 sudo (apt|dnf) install s3cmd
 s3cmd --configure
@@ -136,7 +138,7 @@ Pleromaだけどpr.shc.kanagawa.jp: https://pr.shc.kanagawa.jp/storage
 
 メリット：サブドメインを取得しなくてよい、Cloudflareとかはサブドメインのサブドメインに証明書を発行しないわけだし、オブジェクトストレージに移行した後のURIが新しいものとなるので設定は楽？
 
-デメリット：オブジェクトストレージへのプロキシをmisskey Webと同じWebサーバーに置かないといけない、つまりアクセス増加した際に専用のオブジェクトストレージプロキシ用のNginxを用意するとかは不可能になる
+デメリット：オブジェクトストレージへのプロキシをmisskey Webと同じWebサーバーに置かないといけない、つまりアクセス増加した際に専用のオブジェクトストレージプロキシ用のNginxを用意するとかは不可能になる、Misskey 2024.3.1までのバージョンではサーバーサイドレンダリングにしか対応していないページが、Not foundとなるため、画像のURLを投稿に書くとクリックしても画像に推移できない
 
 ## 一番スマートな既存の配信ディレクトリを置き換えるケース（ダメ）
 
@@ -168,11 +170,22 @@ yourdomainを各自のドメイン名で置き換えるのと
   
 proxy_pass の後のURLはyourbacketnameがバケット名なのでさっき作成したバケット名に置き換える。
 
+`max_size=20g`（20GB）の部分は画像のキャッシュを保存する最大容量なので、Nginxを置くサーバーのストレージに余裕がない場合は減らすことを検討する。`max_size=256m`（256MB）と書くことも可能
 
+また`proxy_cache_path`で保存先を余裕のあるストレージに変えることも可能
+
+RHEL系は
 ```
 mkdir /var/cache/nginx/proxy_cache_images
-chown -R nginx: /var/cache/nginx/proxy_cache_images
+chown -R nginx:nginx /var/cache/nginx/proxy_cache_images
 ```
+
+Debian系は
+```
+mkdir /var/cache/nginx/proxy_cache_images
+chown -R www-data:www-data /var/cache/nginx/proxy_cache_images
+```
+になるはず
   
 ```nginx:s3.yourdomain.conf
 server {
@@ -204,7 +217,7 @@ server {
       proxy_hide_header set-cookie;
       proxy_set_header cookie "";
       proxy_hide_header etag;
-      resolver 1.1.1.1 valid=100s;
+      resolver 127.0.0.53 valid=30s ipv6=off;
       proxy_pass https://yourbacketname.ewr1.vultrobjects.com$request_uri; #シンガポールならewr1ではなくsgp1
       expires max;
   proxy_buffering on;
@@ -234,16 +247,31 @@ yourdomainは各自のドメインにしてね。
 
 <details><summary>新しくディレクトリを新設して配信するケース</summary>
 
+このケースはMisskey 2024.3.1より後のバージョンで使うことをお勧めします。
+
+Misskey 2024.3.1までのバージョンではサーバーサイドレンダリングにしか対応していないページが、Not foundとなるため、この方法でNginxのプロキシを設定し、オブジェクトストレージにアップした画像のURLを貼ると、/storageのルートが登録されておらず意図しない挙動となる可能性が高いです。以下参照
+
+https://github.com/misskey-dev/misskey/issues/13490
+
 今回は`https://インスタンスのドメイン/storage`っていうディレクトリから配信するようにします。
   
 別に`storage`っていう文字列でなくとも構わない、すでにmisskeyにより使われているとこじゃなかったら
   
 現在は`https://インスタンスのドメイン/files`から配信されていますのでこれを変更します。
 
+RHEL系は
 ```
 mkdir /var/cache/nginx/proxy_cache_images
-chown -R nginx: /var/cache/nginx/proxy_cache_images
+chown -R nginx:nginx /var/cache/nginx/proxy_cache_images
 ```
+
+Debian系は
+```
+mkdir /var/cache/nginx/proxy_cache_images
+chown -R www-data:www-data /var/cache/nginx/proxy_cache_images
+```
+になるはず
+
 
 misskeyのNginxファイルに以下追記
 
@@ -252,15 +280,19 @@ misskeyのNginxファイルに以下追記
 proxy_cache_path /var/cache/nginx/proxy_cache_images levels=1 keys_zone=images:2m max_size=20g inactive=90d;
 ```
 
+`max_size=20g`（20GB）の部分は画像のキャッシュを保存する最大容量なので、Nginxを置くサーバーのストレージに余裕がない場合は減らすことを検討する。
+
+`max_size=256m`（256MB）と書くことも可能
+
+また`proxy_cache_path`で保存先を余裕のあるストレージに変えることも可能
+
 ```nginx:/etc/nginx/sites-available/misskey.conf
 location /storage/ {
   limit_except GET {
     deny all;
   }
 
-  try_files $uri $uri/ @proxy;
-
-  resolver 1.1.1.1 valid=100s;
+  resolver 127.0.0.53 valid=30s ipv6=off;
 
   proxy_pass https://バケット名.ewr1.vultrobjects.com/; #シンガポールならewr1ではなくsgp1
 
