@@ -105,6 +105,9 @@ misskey.ioだってs3.arkjp.netでメディア用プロキシをホストして�
 各自の運用に合わせて作成してみて  
 yourdomainを各自のドメイン名で置き換えるのと  
 proxy_pass の後のURLはyourbacketnameがバケット名なのでさっき作成したバケット名に置き換える。  
+`max_size=20g`（20GB）の部分は画像のキャッシュを保存する最大容量なので、Nginxを置くサーバーのストレージに余裕がない場合は減らすことを検討する。  
+`max_size=256m`（256MB）と書くことも可能  
+また`proxy_cache_path`で保存先を余裕のあるストレージに変えることも可能  
 
 ```
 mkdir /var/cache/nginx/proxy_cache_images
@@ -143,7 +146,7 @@ server {
       proxy_hide_header set-cookie;
       proxy_set_header cookie "";
       proxy_hide_header etag;
-      resolver 1.1.1.1 valid=100s;
+      resolver 127.0.0.53 valid=30s ipv6=off;
       proxy_pass https://yourbacketname.ewr1.vultrobjects.com$request_uri; #シンガポールならewr1ではなくsgp1
       expires max;
   proxy_cache images;
@@ -193,14 +196,8 @@ location /storage/ {
     deny all;
   }
 
-  root /home/mastodon/live/public/system;
-  try_files $uri $uri/ @proxy;
-
-  resolver 1.1.1.1 valid=100s;
-
-  rewrite /storage/(.*) /$1 break;
-
-  proxy_pass https://バケット名.ewr1.vultrobjects.com/; #シンガポールならewr1ではなくsgp1
+  resolver 127.0.0.53 valid=30s ipv6=off;
+  proxy_pass https://バケット名.ewr1.vultrobjects.com/storage/; #シンガポールならewr1ではなくsgp1
 
   proxy_buffering on;
   proxy_redirect off;
@@ -221,6 +218,10 @@ location /storage/ {
 
 }
 ```
+
+`max_size=20g`（20GB）の部分は画像のキャッシュを保存する最大容量なので、Nginxを置くサーバーのストレージに余裕がない場合は減らすことを検討する。  
+`max_size=256m`（256MB）と書くことも可能  
+また`proxy_cache_path`で保存先を余裕のあるストレージに変えることも可能  
 
 </details>
 
