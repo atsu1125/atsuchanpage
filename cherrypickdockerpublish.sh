@@ -31,7 +31,7 @@ echo Misskeyの安定版は${oldversion}から${stableversion}に変わりまし
 echo アップデートを実行します。
 
 git clone https://github.com/kokonect-link/cherrypick -b $stableversion cherrypick-$stableversion
-docker build --no-cache -t ghcr.io/atsu1125/cherrypick:${stableversion} cherrypick-${stableversion}
+docker build --no-cache -t ghcr.io/atsu1125/cherrypick:${stableversion} -t ghcr.io/atsu1125/cherrypick:latest cherrypick-${stableversion}
 docker push ghcr.io/atsu1125/cherrypick:${stableversion}
 docker push ghcr.io/atsu1125/cherrypick:latest
 rm -rf cherrypick-${stableversion}
