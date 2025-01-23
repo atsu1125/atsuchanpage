@@ -41,14 +41,14 @@ sudo sed -i -e "/^ *image: misskey\/misskey:/c\    image: misskey\/misskey:$stab
 docker-compose -f $misskeydirectory/docker-compose.yml pull;docker-compose -f $misskeydirectory/docker-compose.yml up -d
 
 #アップデート完了までスタンバイする（12秒ごとにヘルスチェック6回失敗したら諦める）
-HEALTH=`docker-compose -f $misskeydirectory/docker-compose.yml ps | grep -c healthy`
+HEALTH=`docker-compose -f $misskeydirectory/docker-compose.yml ps | grep -c '(healthy)'`
 TIMEOUT=0
 
 until [ ${HEALTH} -gt 3 ] || [ ${TIMEOUT} -gt 6 ] ;
 do
 echo waiting the node is online...
 sleep 12s
-HEALTH=`docker-compose -f $misskeydirectory/docker-compose.yml ps | grep -c healthy`
+HEALTH=`docker-compose -f $misskeydirectory/docker-compose.yml ps | grep -c '(healthy)'`
 TIMEOUT=$(( $TIMEOUT + 1 ))
 done
 
