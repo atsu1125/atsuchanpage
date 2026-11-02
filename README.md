@@ -36,6 +36,12 @@
 2021/11/29 自宅MacからVultrに移行
 ## <a href=https://relay.shc.kanagawa.jp>relay.shc.kanagawa.jp</a> (LitePub relay) ##
 2021/9/3 稼働開始（Azure）  
+2023/3/3 AzureからScalewayに移行  
+2023/10/30 ScalewayからContaboに移行  
+## <a href=https://pub-relay.shc.kanagawa.jp>pub-relay.shc.kanagawa.jp</a> (Pub relay) ##
+2021/11/1 稼働開始（Azure）  
+2023/3/3 AzureからScalewayに移行  
+2023/10/30 ScalewayからContaboに移行  
 ## <a href=https://mt.shc.kanagawa.jp>mt.shc.kanagawa.jp</a> (Mastodon) ##
 2021/8/29 インスタンス稼働開始（自宅Mac）  
 2022/3/30 自宅Macから自宅ThinkCentreに移行・Vultrオブジェクトストレージ導入  
@@ -47,8 +53,8 @@
 9/1 GCPからVultrに移行  
 9/3 GINインデックスからRUMインデックスに変更  
 2022/3/30 Vultrから自宅ThinkCentreに移行・Vultrオブジェクトストレージ導入  
+10/26 Pleroma から Akkoma に変更  
 2025/12/27 オブジェクトストレージをVultrからBackBlaze B2に移行  
-10/26 Pleroma から Akkoma に変更
 ## <a href=https://mk.shc.kanagawa.jp>mk.shc.kanagawa.jp</a> (Misskey) ##
 2021/8/1 インスタンス稼働開始（自宅Mac）  
 8/21 全文検索(MeCab)を導入  
