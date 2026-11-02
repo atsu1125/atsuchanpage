@@ -14,6 +14,9 @@
 7/5 ハッシュタグタイムラインで全ての公開範囲をみられるように設定  
 8/25 ドメインタイムラインを導入  
 11/14 Vultrオブジェクトストレージを導入  
+2023/10/30 サーバーをVultrからHetznerに移行  
+2025/11/19 オブジェクトストレージをVultrからBackBlaze B2に移行  
+2026/11/1 Secure modeを有効化  
 ## pleroma.atsuchan.page (Pleroma) ##
 2021/5/2 インスタンス稼働開始（さくらインターネット）  
 8/15 さくらインターネットからVultrに移行  
@@ -26,6 +29,8 @@
 8/16 ライブ配信機能を有効化  
 11/14 データベースの破損が発覚しデータを削除した上で初期化し再出発  
 11/15 Vultrオブジェクトストレージを導入  
+2023/10/30 サーバーをVultrからHetznerに移行  
+2025/12/27 オブジェクトストレージをVultrからBackBlaze B2に移行  
 ## <a href=https://plume.atsuchan.page>plume.atsuchan.page</a> (Plume) ##
 2021/9/13 インスタンス稼働開始（自宅Mac）  
 2021/11/29 自宅MacからVultrに移行
@@ -34,13 +39,18 @@
 ## <a href=https://mt.shc.kanagawa.jp>mt.shc.kanagawa.jp</a> (Mastodon) ##
 2021/8/29 インスタンス稼働開始（自宅Mac）  
 2022/3/30 自宅Macから自宅ThinkCentreに移行・Vultrオブジェクトストレージ導入  
+2025/12/27 オブジェクトストレージをVultrからBackBlaze B2に移行 
+2026/11/1 Secure modeを有効化  
 ## <a href=https://pr.shc.kanagawa.jp>pr.shc.kanagawa.jp</a> (Pleroma) ##
 2021/8/1 インスタンス稼働開始（自宅Mac）  
 8/21 自宅MacからGCPに移行  
 9/1 GCPからVultrに移行  
 9/3 GINインデックスからRUMインデックスに変更  
 2022/3/30 Vultrから自宅ThinkCentreに移行・Vultrオブジェクトストレージ導入  
+2025/12/27 オブジェクトストレージをVultrからBackBlaze B2に移行 
 10/26 Pleroma から Akkoma に変更
 ## <a href=https://mk.shc.kanagawa.jp>mk.shc.kanagawa.jp</a> (Misskey) ##
 2021/8/1 インスタンス稼働開始（自宅Mac）  
 8/21 全文検索(MeCab)を導入  
+2022/5/17 自宅Macから自宅ThinkCentreに移行  
+2025/12/27 オブジェクトストレージをVultrからBackBlaze B2に移行 
